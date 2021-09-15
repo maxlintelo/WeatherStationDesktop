@@ -2,8 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QtNetwork/qnetworkaccessmanager.h>
-#include <QtNetwork/QNetworkReply>
+#include "dbhandler.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,5 +18,6 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    DbHandler* dbHandler;
 };
 #endif // MAINWINDOW_H

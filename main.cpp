@@ -60,6 +60,9 @@ int main(int argc, char *argv[])
     window.setCentralWidget(chartView);
     window.resize(420, 300);
     window.show();
+    //Ui::MainWindow ui;
+    //ui.setupUi(&window);
 
+    window.show();
     return a.exec();
 }
