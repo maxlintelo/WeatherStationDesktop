@@ -18,48 +18,51 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    QBarSet *set0 = new QBarSet("Temperature");
-    QBarSet *set1 = new QBarSet("Humidity");
-    QBarSet *set2 = new QBarSet("Pressure");
+//    QBarSet *set0 = new QBarSet("Temperature");
+//    QBarSet *set1 = new QBarSet("Humidity");
+//    QBarSet *set2 = new QBarSet("Pressure");
 
-    *set0 << 283 << 341 << 313 << 338 << 346 << 335;
-    *set1 << 250 << 315 << 282 << 307 << 303 << 330;
-    *set2 << 294 << 246 << 257 << 319 << 300 << 325;
+//    *set0 << 283 << 341 << 313 << 338 << 346 << 335;
+//    *set1 << 250 << 315 << 282 << 307 << 303 << 330;
+//    *set2 << 294 << 246 << 257 << 319 << 300 << 325;
 
-    QBarSeries *series = new QBarSeries();
+//    QBarSeries *series = new QBarSeries();
 
-    series->append(set0);
-    series->append(set1);
-    series->append(set2);
+//    series->append(set0);
+//    series->append(set1);
+//    series->append(set2);
 
-    QChart *chart = new QChart();
-    chart->addSeries(series);
-    chart->setTitle("Batting Avg by Year");
-    chart->setAnimationOptions(QChart::AllAnimations);
+//    QChart *chart = new QChart();
+//    chart->addSeries(series);
+//    chart->setTitle("Batting Avg by Year");
+//    chart->setAnimationOptions(QChart::AllAnimations);
 
-    QStringList categories;
-    categories << "2013" << "2014" << "2015" << "2016" << "2017" << "2018";
+//    QStringList categories;
+//    categories << "2013" << "2014" << "2015" << "2016" << "2017" << "2018";
 
-    QBarCategoryAxis *axis = new QBarCategoryAxis();
-    axis->append(categories);
-    chart->createDefaultAxes();
-    chart->setAxisX(axis, series);
-    chart->legend()->setVisible(true);
-    chart->legend()->setAlignment(Qt::AlignBottom);
+//    QBarCategoryAxis *axis = new QBarCategoryAxis();
+//    axis->append(categories);
+//    chart->createDefaultAxes();
+//    chart->setAxisX(axis, series);
+//    chart->legend()->setVisible(true);
+//    chart->legend()->setAlignment(Qt::AlignBottom);
 
-    QChartView *chartView = new QChartView(chart);
-    chartView->setRenderHint(QPainter::Antialiasing);
+//    QChartView *chartView = new QChartView(chart);
+//    chartView->setRenderHint(QPainter::Antialiasing);
 
-    QPalette pal = qApp->palette();
-    pal.setColor(QPalette::Window, QRgb(0xffffff));
-    pal.setColor(QPalette::WindowText, QRgb(0x404044));
-    qApp->setPalette(pal);
+//    QPalette pal = qApp->palette();
+//    pal.setColor(QPalette::Window, QRgb(0xffffff));
+//    pal.setColor(QPalette::WindowText, QRgb(0x404044));
+//    qApp->setPalette(pal);
 
-    QMainWindow window;
+//    QMainWindow window;
 
-    window.setCentralWidget(chartView);
-    window.resize(420, 300);
-    window.show();
+//    window.setCentralWidget(chartView);
+//    window.resize(420, 300);
 
+
+    MainWindow w;
+    w.show();
+    return a.exec();
     return a.exec();
 }
