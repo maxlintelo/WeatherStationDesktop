@@ -5,6 +5,8 @@
 #include <QtCharts>
 #include <QChartView>
 #include <QLineSeries>
+#include <QTimer>
+#include <QCoreApplication>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,8 +21,12 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+public:
+    void createGraph();
+public slots:
+    void graphTimerEvent();
 private slots:
-    void on_pushButton_clicked();
+    void on_TemperatureButton_clicked();
 
     void on_pushButton_3_clicked();
 
@@ -31,5 +37,6 @@ private:
     QValueAxis *axisX;
     QValueAxis *axisY;
     QChartView *chartView;
+    QTimer *dataTimer;
 };
 #endif // MAINWINDOW_H
