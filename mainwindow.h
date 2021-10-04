@@ -17,26 +17,37 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 public:
-    void createGraph();
+    void createTemperatureGraph();
+    void createHumidityGraph();
 public slots:
-    void graphTimerEvent();
+    void graphUpdateEvent();
 private slots:
     void on_TemperatureButton_clicked();
-
     void on_pushButton_3_clicked();
+    void on_HumidityButton_clicked();
 
 private:
     Ui::MainWindow *ui;
-    QLineSeries *series;
-    QChart *chart;
-    QValueAxis *axisX;
-    QValueAxis *axisY;
-    QChartView *chartView;
     QTimer *dataTimer;
+
+    //temperature graph
+    QLineSeries *tempSeries;
+    QChart *tempChart;
+    QValueAxis *tempAxisX;
+    QValueAxis *tempAxisY;
+    QChartView *tempChartView;
+
+    //humidity graph
+    QLineSeries *humidSeries;
+    QChart *humidChart;
+    QValueAxis *humidAxisX;
+    QValueAxis *humidAxisY;
+    QChartView *humidChartView;
+
+
 };
 #endif // MAINWINDOW_H
