@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow()
 {
     delete ui;
+
     delete series;
     delete chart;
     delete axisX;
@@ -79,4 +80,3 @@ void MainWindow::on_pushButton_3_clicked()
 {
 
 }
-
