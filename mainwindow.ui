@@ -30,7 +30,7 @@
    <widget class="QFrame" name="graphTemperature">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>210</x>
       <y>10</y>
       <width>881</width>
       <height>591</height>

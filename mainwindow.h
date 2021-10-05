@@ -23,8 +23,10 @@ public:
 public:
     void createTemperatureGraph();
     void createHumidityGraph();
+    void initiateTimer();
 public slots:
     void graphUpdateEvent();
+    void graphClearEvent();
 private slots:
     void on_TemperatureButton_clicked();
     void on_pushButton_3_clicked();
@@ -33,6 +35,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QTimer *dataTimer;
+    QTimer *clearDataTimer;
 
     //temperature graph
     QLineSeries *tempSeries;
@@ -51,3 +54,6 @@ private:
 
 };
 #endif // MAINWINDOW_H
+
+//https://www.youtube.com/watch?v=RjwxKpzYnFE
+//https://www.youtube.com/watch?v=y-FXTT5Xn2A

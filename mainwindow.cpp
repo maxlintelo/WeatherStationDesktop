@@ -20,12 +20,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     createTemperatureGraph();
     createHumidityGraph();
+    initiateTimer();
 
-    Sleep(1000);
-
-    dataTimer = new QTimer(this);
-    connect(dataTimer, SIGNAL(timeout()),this, SLOT(graphUpdateEvent()));
-    dataTimer->start(1000);
 }
 
 
@@ -34,6 +30,7 @@ MainWindow::~MainWindow()
     //main
     delete ui;
     delete dataTimer;
+    delete clearDataTimer;
 
     //temperature graph
     delete tempSeries;
@@ -79,17 +76,18 @@ void MainWindow::createTemperatureGraph(){
     tempChartView->setRenderHint(QPainter::Antialiasing);
     tempChartView->resize(graphSize, graphSize);
     tempChartView->setParent(ui->graphTemperature);
+    ui->graphTemperature->setVisible(TRUE);
 }
 
 void MainWindow::createHumidityGraph(){
     humidSeries = new QLineSeries();
-    humidSeries->append(0,16);
+    humidSeries->append(0,50);
 
     humidChart = new QChart();
     humidChart->legend()->show();
     humidChart->addSeries(humidSeries);
     //chart->createDefaultAxes();
-    humidChart->setTitle("humiderature");
+    humidChart->setTitle("Humidity");
 
     humidAxisX = new QValueAxis;
     humidAxisX->setRange(timeMin,timeMax);
@@ -106,14 +104,31 @@ void MainWindow::createHumidityGraph(){
 
     humidChartView = new QChartView(humidChart);
     humidChartView->setRenderHint(QPainter::Antialiasing);
-    humidChartView->resize(graphSize, graphSize);
+    humidChartView->resize(620, graphSize);
     humidChartView->setParent(ui->graphHumidity);
+    ui->graphHumidity->setVisible(FALSE);
+}
+
+void MainWindow::initiateTimer(){
+    dataTimer = new QTimer(this);
+    connect(dataTimer, SIGNAL(timeout()),this, SLOT(graphUpdateEvent()));
+    dataTimer->start(1000);
+
+    clearDataTimer = new QTimer(this);
+    connect(clearDataTimer, SIGNAL(timeout()), this, SLOT(graphClearEvent()));
+    clearDataTimer->start(60500);
 }
 
 void MainWindow::graphUpdateEvent(){
      tempSeries->append(i, 20);
-     humidSeries->append(i, 59);
+     humidSeries->append(i, 80);
      i++;
+}
+
+void MainWindow::graphClearEvent(){
+    tempSeries->clear();
+    humidSeries->clear();
+    i = 0;
 }
 
 void MainWindow::on_TemperatureButton_clicked()
@@ -126,7 +141,7 @@ void MainWindow::on_TemperatureButton_clicked()
 void MainWindow::on_HumidityButton_clicked()
 {
     ui->graphHumidity->setVisible(TRUE);
-    tempSeries->hide();
+    ui->graphTemperature->setVisible(FALSE);
 }
 
 void MainWindow::on_pushButton_3_clicked()
