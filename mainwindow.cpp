@@ -9,6 +9,8 @@ int tempMin = 0;
 int tempMax = 40;
 int humidMin = 0;
 int humidMax = 100;
+int presMin = 960;
+int presMax = 1060;
 
 static int i = 1;
 
@@ -20,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     createTemperatureGraph();
     createHumidityGraph();
+    createPressureGraph();
     initiateTimer();
 
 }
@@ -45,6 +48,13 @@ MainWindow::~MainWindow()
     delete humidAxisX;
     delete humidAxisY;
     delete humidChartView;
+
+    //pressure graph
+    delete presSeries;
+    delete presChart;
+    delete presAxisX;
+    delete presAxisY;
+    delete presChartView;
 }
 
 //https://www.youtube.com/watch?v=eS61kziGo1I
@@ -109,6 +119,35 @@ void MainWindow::createHumidityGraph(){
     ui->graphHumidity->setVisible(FALSE);
 }
 
+void MainWindow::createPressureGraph(){
+    presSeries = new QLineSeries();
+    presSeries->append(0,998);
+
+    presChart = new QChart();
+    presChart->legend()->show();
+    presChart->addSeries(presSeries);
+    presChart->setTitle("Pressure");
+
+    presAxisX = new QValueAxis;
+    presAxisX->setRange(timeMin,timeMax);
+    presChart->addAxis(presAxisX, Qt::AlignBottom);
+    presSeries->attachAxis(presAxisX);
+
+    presAxisY = new QValueAxis;
+    presAxisY->setRange(presMin,presMax);
+    presChart->addAxis(presAxisY, Qt::AlignLeft);
+    presSeries->attachAxis(presAxisY);
+
+    presChart->legend()->setVisible(true);
+    presChart->legend()->setAlignment(Qt::AlignBottom);
+
+    presChartView = new QChartView(presChart);
+    presChartView->setRenderHint(QPainter::Antialiasing);
+    presChartView->resize(620, graphSize);
+    presChartView->setParent(ui->graphPressure);
+    ui->graphPressure->setVisible(FALSE);
+}
+
 void MainWindow::initiateTimer(){
     dataTimer = new QTimer(this);
     connect(dataTimer, SIGNAL(timeout()),this, SLOT(graphUpdateEvent()));
@@ -122,12 +161,14 @@ void MainWindow::initiateTimer(){
 void MainWindow::graphUpdateEvent(){
      tempSeries->append(i, 20);
      humidSeries->append(i, 80);
+     presSeries->append(i, 990);
      i++;
 }
 
 void MainWindow::graphClearEvent(){
     tempSeries->clear();
     humidSeries->clear();
+    presSeries->clear();
     i = 0;
 }
 
@@ -135,19 +176,20 @@ void MainWindow::on_TemperatureButton_clicked()
 {
     ui->graphTemperature->setVisible(TRUE);
     ui->graphHumidity->setVisible(FALSE);
-    tempSeries->show();
+    ui->graphPressure->setVisible(FALSE);
 }
 
 void MainWindow::on_HumidityButton_clicked()
 {
+    ui->graphTemperature->setVisible(FALSE);
     ui->graphHumidity->setVisible(TRUE);
+    ui->graphPressure->setVisible(FALSE);
+}
+
+void MainWindow::on_PressureButton_clicked()
+{
+    ui->graphPressure->setVisible(TRUE);
+    ui->graphHumidity->setVisible(FALSE);
     ui->graphTemperature->setVisible(FALSE);
 }
-
-void MainWindow::on_pushButton_3_clicked()
-{
-
-}
-
-
 

@@ -41,7 +41,7 @@
    <widget class="QFrame" name="graphHumidity">
     <property name="geometry">
      <rect>
-      <x>200</x>
+      <x>210</x>
       <y>10</y>
       <width>881</width>
       <height>591</height>
@@ -62,7 +62,7 @@
      <string>Humidity</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="HumidityButton_2">
+   <widget class="QPushButton" name="PressureButton">
     <property name="geometry">
      <rect>
       <x>30</x>
@@ -74,6 +74,17 @@
     <property name="text">
      <string>Pressure</string>
     </property>
+   </widget>
+   <widget class="QFrame" name="graphPressure">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>10</y>
+      <width>881</width>
+      <height>591</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_3"/>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

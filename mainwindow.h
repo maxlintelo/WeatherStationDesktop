@@ -6,7 +6,7 @@
 #include <QChartView>
 #include <QLineSeries>
 #include <QTimer>
-#include <QCoreApplication>
+#include <QNetworkAccessManager>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -23,13 +23,14 @@ public:
 public:
     void createTemperatureGraph();
     void createHumidityGraph();
+    void createPressureGraph();
     void initiateTimer();
 public slots:
     void graphUpdateEvent();
     void graphClearEvent();
 private slots:
     void on_TemperatureButton_clicked();
-    void on_pushButton_3_clicked();
+    void on_PressureButton_clicked();
     void on_HumidityButton_clicked();
 
 private:
@@ -50,6 +51,12 @@ private:
     QValueAxis *humidAxisX;
     QValueAxis *humidAxisY;
     QChartView *humidChartView;
+
+    QLineSeries *presSeries;
+    QChart *presChart;
+    QValueAxis *presAxisX;
+    QValueAxis *presAxisY;
+    QChartView *presChartView;
 
 
 };
