@@ -82,7 +82,7 @@ void MainWindow::createTemperatureGraph(){
 }
 
 void MainWindow::createHumidityGraph(){
-    tempSeries = new QLineSeries();
+    humidSeries = new QLineSeries();
     humidSeries->append(0,16);
 
     humidChart = new QChart();
