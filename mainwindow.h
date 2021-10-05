@@ -7,6 +7,8 @@
 #include <QLineSeries>
 #include <QTimer>
 #include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QPixmap>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -25,6 +27,8 @@ public:
     void createHumidityGraph();
     void createPressureGraph();
     void initiateTimer();
+    void connectToAPI();
+    void checkAPIConnection(/*QNetworkReply* */);
 public slots:
     void graphUpdateEvent();
     void graphClearEvent();
@@ -32,11 +36,11 @@ private slots:
     void on_TemperatureButton_clicked();
     void on_PressureButton_clicked();
     void on_HumidityButton_clicked();
-
 private:
     Ui::MainWindow *ui;
     QTimer *dataTimer;
     QTimer *clearDataTimer;
+    QString myUrl = "https://www.google.nl/url?sa=i&url=https%3A%2F%2Fwww.amazon.in%2FAmazonBasics-Everyday-Alkaline-Batteries-4-Pack%2Fdp%2FB00LH3DREU&psig=AOvVaw06uKSu2JnAjWekte3swfWn&ust=1633543494292000&source=images&cd=vfe&ved=0CAkQjRxqFwoTCKj_3fbts_MCFQAAAAAdAAAAABAD";
 
     //temperature graph
     QLineSeries *tempSeries;

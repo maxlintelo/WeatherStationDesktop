@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     createHumidityGraph();
     createPressureGraph();
     initiateTimer();
+    connectToAPI();
 
 }
 
@@ -193,3 +194,14 @@ void MainWindow::on_PressureButton_clicked()
     ui->graphTemperature->setVisible(FALSE);
 }
 
+void MainWindow::connectToAPI(){
+    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
+    connect(manager, &QNetworkAccessManager::finished, this, &MainWindow::checkAPIConnection);
+    const QUrl url = QUrl(myUrl);
+    QNetworkRequest request(url);
+    manager->get(request);
+}
+
+void MainWindow::checkAPIConnection(/*QNetworkReply *reply*/){
+    qDebug() << "connected to: " + myUrl + "";
+}
