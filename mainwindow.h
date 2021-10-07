@@ -44,6 +44,8 @@ private:
     QTimer *dataTimer;
     QTimer *clearDataTimer;
 
+    QUrl url;
+    QString myStartupUrl = "http://81.207.176.52:8081/api/mock?limit=2/";
     QString myUrl = "http://81.207.176.52:8081/api/mock?limit=1/";
     QJsonObject rootObj;
     QJsonDocument document;

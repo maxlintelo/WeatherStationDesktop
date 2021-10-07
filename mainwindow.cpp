@@ -12,7 +12,8 @@ int humidMax = 100;
 int presMin = 960;
 int presMax = 1060;
 
-static int xValue = 0;
+static int xValue = 5;
+static int dataRequestValue = 0;
 
 int graphSize = 610;
 
@@ -25,8 +26,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     createPressureGraph();
     connectToAPI();
     initiateTimer();
-
-
 }
 
 
@@ -150,18 +149,20 @@ void MainWindow::createPressureGraph(){
 void MainWindow::initiateTimer(){
     dataTimer = new QTimer(this);
     connect(dataTimer, SIGNAL(timeout()),this, SLOT(graphUpdateEvent()));
-    dataTimer->start(1000);
+    dataTimer->start(5000);
 
     clearDataTimer = new QTimer(this);
     connect(clearDataTimer, SIGNAL(timeout()), this, SLOT(graphClearEvent()));
-    clearDataTimer->start(60500);
+    clearDataTimer->start(64500);
 }
 
 void MainWindow::graphUpdateEvent(){
+    connectToAPI();
+
     tempSeries->append(xValue, temp);
     humidSeries->append(xValue, humid);
     presSeries->append(xValue, pres);
-    xValue++;
+    xValue = xValue + 5;
 }
 
 void MainWindow::graphClearEvent(){
@@ -196,7 +197,11 @@ void MainWindow::connectToAPI(){
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     connect(manager, &QNetworkAccessManager::finished, this, &MainWindow::checkAPIConnection);
 
-    const QUrl url = QUrl(myUrl);
+    if (dataRequestValue == 0){
+        url = QUrl(myStartupUrl);
+    }else {
+        url = QUrl(myUrl);
+    }
     QNetworkRequest request(url);
     manager->get(request);
 }
@@ -207,13 +212,19 @@ void MainWindow::checkAPIConnection(QNetworkReply *reply){
 
     document = QJsonDocument::fromJson(reply->readAll());
     rootObj = document.object();
-    int j = 0;
     foreach(const QJsonValue & v, document.array()) {
         temp = v["temperature"].toString().toFloat();
         humid = v["humidity"].toString().toFloat();
         pres = v["pressure"].toString().toFloat();
         createdAt = v["createdAt"].toString();
-        qDebug() << "-- Doc" << j << "--\nTemp:" << temp << "\nHumid:" << humid << "\nPress:" << pres << "\nCreatedAt:" << createdAt << "\n";
-        j++;
+        qDebug() << "-- Doc" << dataRequestValue << "--\nTemp:" << temp << "\nHumid:" << humid << "\nPress:" << pres << "\nCreatedAt:" << createdAt << "\n";
+        if(dataRequestValue == 0){
+            tempSeries->append(0,temp);
+            humidSeries->append(0, humid);
+            presSeries->append(0, pres);
+        }
+        dataRequestValue++;
     }
+
+
 }
