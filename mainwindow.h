@@ -39,7 +39,7 @@ private:
     Ui::MainWindow *ui;
     QTimer *dataTimer;
     QTimer *clearDataTimer;
-    QString myUrl = "http://3ad6c2cabc9f4a.localhost.run/api/mock?limit=10";
+    QString myUrl = "http://808f91945a37d7.localhost.run/api/mock?limit=0";
 
     //temperature graph
     QLineSeries *tempSeries;

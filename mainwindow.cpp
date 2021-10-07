@@ -5,7 +5,7 @@
 int timeMin = 0;
 int timeMax = 60;
 
-int tempMin = 0;
+int tempMin = -20;
 int tempMax = 40;
 int humidMin = 0;
 int humidMax = 100;
@@ -204,9 +204,18 @@ void MainWindow::connectToAPI(){
 }
 
 void MainWindow::checkAPIConnection(QNetworkReply *reply){
-    QByteArray bytes = reply->readAll();
-    QString str = QString::fromUtf8(bytes.data(), bytes.size());
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    qDebug() << QVariant(statusCode).toString();
-    qDebug() << "connected to: " + str + " ";
+    qDebug() << "Statuscode from server: " + QVariant(statusCode).toString();
+
+    QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
+    QJsonObject rootObj = document.object();
+    int j = 0;
+    foreach(const QJsonValue & v, document.array()) {
+        float temp = v["temperature"].toString().toFloat();
+        float humid = v["humidity"].toString().toFloat();
+        float pres = v["pressure"].toString().toFloat();
+        QString createdAt = v["createdAt"].toString();
+        qDebug() << "-- Doc" << j << "--\nTemp:" << temp << "\nHumid:" << humid << "\nPress:" << pres << "\nCreatedAt:" << createdAt << "\n";
+        j++;
+    }
 }
