@@ -8,7 +8,6 @@
 #include <QTimer>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
-#include <QPixmap>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,7 +27,7 @@ public:
     void createPressureGraph();
     void initiateTimer();
     void connectToAPI();
-    void checkAPIConnection(/*QNetworkReply* */);
+    void checkAPIConnection(QNetworkReply*);
 public slots:
     void graphUpdateEvent();
     void graphClearEvent();
@@ -40,7 +39,7 @@ private:
     Ui::MainWindow *ui;
     QTimer *dataTimer;
     QTimer *clearDataTimer;
-    QString myUrl = "https://www.google.nl/url?sa=i&url=https%3A%2F%2Fwww.amazon.in%2FAmazonBasics-Everyday-Alkaline-Batteries-4-Pack%2Fdp%2FB00LH3DREU&psig=AOvVaw06uKSu2JnAjWekte3swfWn&ust=1633543494292000&source=images&cd=vfe&ved=0CAkQjRxqFwoTCKj_3fbts_MCFQAAAAAdAAAAABAD";
+    QString myUrl = "http://3ad6c2cabc9f4a.localhost.run/api/mock?limit=10";
 
     //temperature graph
     QLineSeries *tempSeries;

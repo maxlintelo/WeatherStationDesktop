@@ -197,11 +197,16 @@ void MainWindow::on_PressureButton_clicked()
 void MainWindow::connectToAPI(){
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     connect(manager, &QNetworkAccessManager::finished, this, &MainWindow::checkAPIConnection);
+
     const QUrl url = QUrl(myUrl);
     QNetworkRequest request(url);
     manager->get(request);
 }
 
-void MainWindow::checkAPIConnection(/*QNetworkReply *reply*/){
-    qDebug() << "connected to: " + myUrl + "";
+void MainWindow::checkAPIConnection(QNetworkReply *reply){
+    QByteArray bytes = reply->readAll();
+    QString str = QString::fromUtf8(bytes.data(), bytes.size());
+    int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+    qDebug() << QVariant(statusCode).toString();
+    qDebug() << "connected to: " + str + " ";
 }
