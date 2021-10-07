@@ -36,10 +36,19 @@ private slots:
     void on_PressureButton_clicked();
     void on_HumidityButton_clicked();
 private:
+    float temp;
+    float humid;
+    float pres;
+
     Ui::MainWindow *ui;
     QTimer *dataTimer;
     QTimer *clearDataTimer;
-    QString myUrl = "http://808f91945a37d7.localhost.run/api/mock?limit=0";
+
+    QString myUrl = "http://81.207.176.52:8081/api/mock?limit=1/";
+    QJsonObject rootObj;
+    QJsonDocument document;
+    QString createdAt;
+
 
     //temperature graph
     QLineSeries *tempSeries;
@@ -55,6 +64,7 @@ private:
     QValueAxis *humidAxisY;
     QChartView *humidChartView;
 
+    //pressure graph
     QLineSeries *presSeries;
     QChart *presChart;
     QValueAxis *presAxisX;

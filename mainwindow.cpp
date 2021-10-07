@@ -12,7 +12,7 @@ int humidMax = 100;
 int presMin = 960;
 int presMax = 1060;
 
-static int i = 1;
+static int xValue = 0;
 
 int graphSize = 610;
 
@@ -23,8 +23,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     createTemperatureGraph();
     createHumidityGraph();
     createPressureGraph();
-    initiateTimer();
     connectToAPI();
+    initiateTimer();
+
 
 }
 
@@ -62,7 +63,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::createTemperatureGraph(){
     tempSeries = new QLineSeries();
-    tempSeries->append(0,16);
 
     tempChart = new QChart();
     tempChart->legend()->show();
@@ -92,7 +92,6 @@ void MainWindow::createTemperatureGraph(){
 
 void MainWindow::createHumidityGraph(){
     humidSeries = new QLineSeries();
-    humidSeries->append(0,50);
 
     humidChart = new QChart();
     humidChart->legend()->show();
@@ -122,7 +121,6 @@ void MainWindow::createHumidityGraph(){
 
 void MainWindow::createPressureGraph(){
     presSeries = new QLineSeries();
-    presSeries->append(0,998);
 
     presChart = new QChart();
     presChart->legend()->show();
@@ -160,17 +158,17 @@ void MainWindow::initiateTimer(){
 }
 
 void MainWindow::graphUpdateEvent(){
-     tempSeries->append(i, 20);
-     humidSeries->append(i, 80);
-     presSeries->append(i, 990);
-     i++;
+    tempSeries->append(xValue, temp);
+    humidSeries->append(xValue, humid);
+    presSeries->append(xValue, pres);
+    xValue++;
 }
 
 void MainWindow::graphClearEvent(){
     tempSeries->clear();
     humidSeries->clear();
     presSeries->clear();
-    i = 0;
+    xValue = 0;
 }
 
 void MainWindow::on_TemperatureButton_clicked()
@@ -207,14 +205,14 @@ void MainWindow::checkAPIConnection(QNetworkReply *reply){
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     qDebug() << "Statuscode from server: " + QVariant(statusCode).toString();
 
-    QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
-    QJsonObject rootObj = document.object();
+    document = QJsonDocument::fromJson(reply->readAll());
+    rootObj = document.object();
     int j = 0;
     foreach(const QJsonValue & v, document.array()) {
-        float temp = v["temperature"].toString().toFloat();
-        float humid = v["humidity"].toString().toFloat();
-        float pres = v["pressure"].toString().toFloat();
-        QString createdAt = v["createdAt"].toString();
+        temp = v["temperature"].toString().toFloat();
+        humid = v["humidity"].toString().toFloat();
+        pres = v["pressure"].toString().toFloat();
+        createdAt = v["createdAt"].toString();
         qDebug() << "-- Doc" << j << "--\nTemp:" << temp << "\nHumid:" << humid << "\nPress:" << pres << "\nCreatedAt:" << createdAt << "\n";
         j++;
     }
