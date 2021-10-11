@@ -40,6 +40,8 @@ private:
     float humid;
     float pres;
 
+    bool connected = false;
+
     Ui::MainWindow *ui;
     QTimer *dataTimer;
     QTimer *clearDataTimer;
@@ -72,8 +74,6 @@ private:
     QValueAxis *presAxisX;
     QValueAxis *presAxisY;
     QChartView *presChartView;
-
-
 };
 #endif // MAINWINDOW_H
 

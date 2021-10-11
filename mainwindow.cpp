@@ -66,7 +66,6 @@ void MainWindow::createTemperatureGraph(){
     tempChart = new QChart();
     tempChart->legend()->show();
     tempChart->addSeries(tempSeries);
-    //chart->createDefaultAxes();
     tempChart->setTitle("Temperature");
 
     tempAxisX = new QValueAxis;
@@ -95,7 +94,6 @@ void MainWindow::createHumidityGraph(){
     humidChart = new QChart();
     humidChart->legend()->show();
     humidChart->addSeries(humidSeries);
-    //chart->createDefaultAxes();
     humidChart->setTitle("Humidity");
 
     humidAxisX = new QValueAxis;
@@ -141,7 +139,7 @@ void MainWindow::createPressureGraph(){
 
     presChartView = new QChartView(presChart);
     presChartView->setRenderHint(QPainter::Antialiasing);
-    presChartView->resize(620, graphSize);
+    presChartView->resize(graphSize, graphSize);
     presChartView->setParent(ui->graphPressure);
     ui->graphPressure->setVisible(FALSE);
 }
@@ -159,10 +157,14 @@ void MainWindow::initiateTimer(){
 void MainWindow::graphUpdateEvent(){
     connectToAPI();
 
-    tempSeries->append(xValue, temp);
-    humidSeries->append(xValue, humid);
-    presSeries->append(xValue, pres);
-    xValue = xValue + 5;
+    if (connected == false){
+        qDebug() << "Not connected to the internet.";
+    } else {
+        tempSeries->append(xValue, temp);
+        humidSeries->append(xValue, humid);
+        presSeries->append(xValue, pres);
+        xValue = xValue + 5;
+    }
 }
 
 void MainWindow::graphClearEvent(){
@@ -209,22 +211,24 @@ void MainWindow::connectToAPI(){
 void MainWindow::checkAPIConnection(QNetworkReply *reply){
     int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     qDebug() << "Statuscode from server: " + QVariant(statusCode).toString();
-
-    document = QJsonDocument::fromJson(reply->readAll());
-    rootObj = document.object();
-    foreach(const QJsonValue & v, document.array()) {
-        temp = v["temperature"].toString().toFloat();
-        humid = v["humidity"].toString().toFloat();
-        pres = v["pressure"].toString().toFloat();
-        createdAt = v["createdAt"].toString();
-        qDebug() << "-- Doc" << dataRequestValue << "--\nTemp:" << temp << "\nHumid:" << humid << "\nPress:" << pres << "\nCreatedAt:" << createdAt << "\n";
-        if(dataRequestValue == 0){
-            tempSeries->append(0,temp);
-            humidSeries->append(0, humid);
-            presSeries->append(0, pres);
+    if (statusCode == 0){
+        connected = false;
+    } else {
+        connected = true;
+        document = QJsonDocument::fromJson(reply->readAll());
+        rootObj = document.object();
+        foreach(const QJsonValue & v, document.array()) {
+            temp = v["temperature"].toString().toFloat();
+            humid = v["humidity"].toString().toFloat();
+            pres = v["pressure"].toString().toFloat();
+            createdAt = v["createdAt"].toString();
+            qDebug() << "-- Doc" << dataRequestValue << "--\nTemp:" << temp << "\nHumid:" << humid << "\nPress:" << pres << "\nCreatedAt:" << createdAt << "\n";
+            if(dataRequestValue == 0){
+                tempSeries->append(0,temp);
+                humidSeries->append(0, humid);
+                presSeries->append(0, pres);
+            }
+            dataRequestValue++;
         }
-        dataRequestValue++;
     }
-
-
 }
