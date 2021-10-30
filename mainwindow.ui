@@ -14,19 +14,6 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="TemperatureButton">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>90</y>
-      <width>141</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Temperature</string>
-    </property>
-   </widget>
    <widget class="QFrame" name="graphTemperature">
     <property name="geometry">
      <rect>
@@ -49,32 +36,6 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2"/>
    </widget>
-   <widget class="QPushButton" name="HumidityButton">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>200</y>
-      <width>141</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Humidity</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="PressureButton">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>310</y>
-      <width>141</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Pressure</string>
-    </property>
-   </widget>
    <widget class="QFrame" name="graphPressure">
     <property name="geometry">
      <rect>
@@ -86,6 +47,45 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_3"/>
    </widget>
+   <widget class="QRadioButton" name="TempRadioBtn">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>30</y>
+      <width>84</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Temperature</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="HumidRadioBtn">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>60</y>
+      <width>84</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Humidity</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="PresRadioBtn">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>90</y>
+      <width>84</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Pressure</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -93,7 +93,7 @@
      <x>0</x>
      <y>0</y>
      <width>854</width>
-     <height>30</height>
+     <height>20</height>
     </rect>
    </property>
   </widget>

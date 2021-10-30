@@ -68,8 +68,9 @@ void MainWindow::createTemperatureGraph(){
     tempChart->addSeries(tempSeries);
     tempChart->setTitle("Temperature");
 
-    tempAxisX = new QValueAxis;
-    tempAxisX->setRange(timeMin,timeMax);
+    tempAxisX = new QDateTimeAxis;
+    tempAxisX->setFormat("dd-MM-yyyy hh:mm:ss");
+    tempAxisX->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTimeUtc());
     tempChart->addAxis(tempAxisX, Qt::AlignBottom);
     tempSeries->attachAxis(tempAxisX);
 
@@ -174,27 +175,6 @@ void MainWindow::graphClearEvent(){
     xValue = 0;
 }
 
-void MainWindow::on_TemperatureButton_clicked()
-{
-    ui->graphTemperature->setVisible(TRUE);
-    ui->graphHumidity->setVisible(FALSE);
-    ui->graphPressure->setVisible(FALSE);
-}
-
-void MainWindow::on_HumidityButton_clicked()
-{
-    ui->graphTemperature->setVisible(FALSE);
-    ui->graphHumidity->setVisible(TRUE);
-    ui->graphPressure->setVisible(FALSE);
-}
-
-void MainWindow::on_PressureButton_clicked()
-{
-    ui->graphPressure->setVisible(TRUE);
-    ui->graphHumidity->setVisible(FALSE);
-    ui->graphTemperature->setVisible(FALSE);
-}
-
 void MainWindow::connectToAPI(){
     QNetworkAccessManager *manager = new QNetworkAccessManager(this);
     connect(manager, &QNetworkAccessManager::finished, this, &MainWindow::checkAPIConnection);
@@ -232,3 +212,27 @@ void MainWindow::checkAPIConnection(QNetworkReply *reply){
         }
     }
 }
+
+void MainWindow::on_TempRadioBtn_clicked()
+{
+    ui->graphTemperature->setVisible(TRUE);
+    ui->graphHumidity->setVisible(FALSE);
+    ui->graphPressure->setVisible(FALSE);
+}
+
+
+void MainWindow::on_HumidRadioBtn_clicked()
+{
+    ui->graphTemperature->setVisible(FALSE);
+    ui->graphHumidity->setVisible(TRUE);
+    ui->graphPressure->setVisible(FALSE);
+}
+
+
+void MainWindow::on_PresRadioBtn_clicked()
+{
+    ui->graphPressure->setVisible(TRUE);
+    ui->graphHumidity->setVisible(FALSE);
+    ui->graphTemperature->setVisible(FALSE);
+}
+

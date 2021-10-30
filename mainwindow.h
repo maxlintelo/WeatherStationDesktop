@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QtCharts>
+#include <QDateTimeAxis>
 #include <QChartView>
 #include <QLineSeries>
 #include <QTimer>
@@ -32,9 +33,10 @@ public slots:
     void graphUpdateEvent();
     void graphClearEvent();
 private slots:
-    void on_TemperatureButton_clicked();
-    void on_PressureButton_clicked();
-    void on_HumidityButton_clicked();
+    void on_TempRadioBtn_clicked();
+    void on_HumidRadioBtn_clicked();
+    void on_PresRadioBtn_clicked();
+
 private:
     float temp;
     float humid;
@@ -57,7 +59,7 @@ private:
     //temperature graph
     QLineSeries *tempSeries;
     QChart *tempChart;
-    QValueAxis *tempAxisX;
+    QDateTimeAxis *tempAxisX;
     QValueAxis *tempAxisY;
     QChartView *tempChartView;
 
