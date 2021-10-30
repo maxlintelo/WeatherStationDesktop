@@ -66,14 +66,14 @@ private:
     //humidity graph
     QLineSeries *humidSeries;
     QChart *humidChart;
-    QValueAxis *humidAxisX;
+    QDateTimeAxis *humidAxisX;
     QValueAxis *humidAxisY;
     QChartView *humidChartView;
 
     //pressure graph
     QLineSeries *presSeries;
     QChart *presChart;
-    QValueAxis *presAxisX;
+    QDateTimeAxis *presAxisX;
     QValueAxis *presAxisY;
     QChartView *presChartView;
 };

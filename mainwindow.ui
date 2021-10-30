@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>854</width>
-    <height>647</height>
+    <width>917</width>
+    <height>662</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <widget class="QFrame" name="graphTemperature">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>240</x>
       <y>10</y>
       <width>881</width>
       <height>591</height>
@@ -28,7 +28,7 @@
    <widget class="QFrame" name="graphHumidity">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>240</x>
       <y>10</y>
       <width>881</width>
       <height>591</height>
@@ -39,7 +39,7 @@
    <widget class="QFrame" name="graphPressure">
     <property name="geometry">
      <rect>
-      <x>210</x>
+      <x>240</x>
       <y>10</y>
       <width>881</width>
       <height>591</height>
@@ -86,13 +86,42 @@
      <string>Pressure</string>
     </property>
    </widget>
+   <widget class="QLabel" name="LogoLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>350</y>
+      <width>231</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap>Logo.jpg</pixmap>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>580</y>
+      <width>231</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>© 2021 Stratosphere Inc. All rights reserved.</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>854</width>
+     <width>917</width>
      <height>20</height>
     </rect>
    </property>

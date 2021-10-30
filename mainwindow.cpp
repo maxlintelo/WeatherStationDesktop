@@ -2,9 +2,6 @@
 #include "ui_mainwindow.h"
 
 //add base-line 0 and -20 line!
-int timeMin = 0;
-int timeMax = 60;
-
 int tempMin = -20;
 int tempMax = 40;
 int humidMin = 0;
@@ -68,13 +65,13 @@ void MainWindow::createTemperatureGraph(){
     tempChart->addSeries(tempSeries);
     tempChart->setTitle("Temperature");
 
-    tempAxisX = new QDateTimeAxis;
-    tempAxisX->setFormat("dd-MM-yyyy hh:mm:ss");
-    tempAxisX->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTimeUtc());
+    tempAxisX = new QDateTimeAxis();
+    tempAxisX->setFormat("hh:mm:ss");
+    tempAxisX->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTime().addSecs(60));
     tempChart->addAxis(tempAxisX, Qt::AlignBottom);
     tempSeries->attachAxis(tempAxisX);
 
-    tempAxisY = new QValueAxis;
+    tempAxisY = new QValueAxis();
     tempAxisY->setRange(tempMin,tempMax);
     tempChart->addAxis(tempAxisY, Qt::AlignLeft);
     tempSeries->attachAxis(tempAxisY);
@@ -97,12 +94,13 @@ void MainWindow::createHumidityGraph(){
     humidChart->addSeries(humidSeries);
     humidChart->setTitle("Humidity");
 
-    humidAxisX = new QValueAxis;
-    humidAxisX->setRange(timeMin,timeMax);
+    humidAxisX = new QDateTimeAxis();
+    humidAxisX->setFormat("hh:mm:ss");
+    humidAxisX->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTime().addSecs(60));
     humidChart->addAxis(humidAxisX, Qt::AlignBottom);
     humidSeries->attachAxis(humidAxisX);
 
-    humidAxisY = new QValueAxis;
+    humidAxisY = new QValueAxis();
     humidAxisY->setRange(humidMin,humidMax);
     humidChart->addAxis(humidAxisY, Qt::AlignLeft);
     humidSeries->attachAxis(humidAxisY);
@@ -125,12 +123,13 @@ void MainWindow::createPressureGraph(){
     presChart->addSeries(presSeries);
     presChart->setTitle("Pressure");
 
-    presAxisX = new QValueAxis;
-    presAxisX->setRange(timeMin,timeMax);
+    presAxisX = new QDateTimeAxis();
+    presAxisX->setFormat("hh:mm:ss");
+    presAxisX->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTime().addSecs(60));
     presChart->addAxis(presAxisX, Qt::AlignBottom);
     presSeries->attachAxis(presAxisX);
 
-    presAxisY = new QValueAxis;
+    presAxisY = new QValueAxis();
     presAxisY->setRange(presMin,presMax);
     presChart->addAxis(presAxisY, Qt::AlignLeft);
     presSeries->attachAxis(presAxisY);
