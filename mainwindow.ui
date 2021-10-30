@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>917</width>
-    <height>662</height>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -98,8 +98,11 @@
     <property name="text">
      <string/>
     </property>
+    <property name="textFormat">
+     <enum>Qt::RichText</enum>
+    </property>
     <property name="pixmap">
-     <pixmap>Logo.jpg</pixmap>
+     <pixmap>../../../../OneDrive - Avans Hogeschool/Project Weerstation/3 - Application/Logo.jpg</pixmap>
     </property>
    </widget>
    <widget class="QLabel" name="label">
