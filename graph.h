@@ -15,6 +15,7 @@
 #define PRES_MAX 1060
 #define GRAPH_SIZE 610
 
+//forward decleration of a class
 class MainWindow;
 
 class graph
