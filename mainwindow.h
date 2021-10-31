@@ -1,10 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-
 #include <QMainWindow>
-#include "graph.h"
-
+#include <QtCharts>
+#include <QDateTimeAxis>
+#include <QChartView>
+#include <QLineSeries>
 #include <QTimer>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -20,28 +21,32 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public:
     MainWindow(QWidget *parent = nullptr);
-    virtual ~MainWindow();
+    ~MainWindow();
 public:
+    void createTemperatureGraph();
+    void createHumidityGraph();
+    void createPressureGraph();
     void initiateTimer();
     void connectToAPI();
     void checkAPIConnection(QNetworkReply*);
-    bool isConnected();
+public slots:
+    void graphUpdateEvent();
+    void graphClearEvent();
 private slots:
     void on_TempRadioBtn_clicked();
     void on_HumidRadioBtn_clicked();
     void on_PresRadioBtn_clicked();
 
 private:
-    int temp;
-    int humid;
-    int pres;
+    float temp;
+    float humid;
+    float pres;
 
     bool connected = false;
 
     Ui::MainWindow *ui;
     QTimer *dataTimer;
     QTimer *clearDataTimer;
-    graph *graphy;
 
     QUrl url;
     QString myStartupUrl = "http://81.207.176.52:8081/api/mock?limit=2/";
@@ -51,7 +56,26 @@ private:
     QString createdAt;
 
 
+    //temperature graph
+    QLineSeries *tempSeries;
+    QChart *tempChart;
+    QDateTimeAxis *tempAxisX;
+    QValueAxis *tempAxisY;
+    QChartView *tempChartView;
 
+    //humidity graph
+    QLineSeries *humidSeries;
+    QChart *humidChart;
+    QDateTimeAxis *humidAxisX;
+    QValueAxis *humidAxisY;
+    QChartView *humidChartView;
+
+    //pressure graph
+    QLineSeries *presSeries;
+    QChart *presChart;
+    QDateTimeAxis *presAxisX;
+    QValueAxis *presAxisY;
+    QChartView *presChartView;
 };
 #endif // MAINWINDOW_H
 
