@@ -198,9 +198,9 @@ void MainWindow::checkAPIConnection(QNetworkReply *reply){
         document = QJsonDocument::fromJson(reply->readAll());
         rootObj = document.object();
         foreach(const QJsonValue & v, document.array()) {
-            temp = v["temperature"].toInt();
-            humid = v["humidity"].toInt();
-            pres = v["pressure"].toInt();
+            temp = v["temperature"].toString().toFloat();
+            humid = v["humidity"].toString().toFloat();
+            pres = v["pressure"].toString().toFloat();
             createdAt = v["createdAt"].toString();
             qDebug() << "-- Doc" << dataRequestValue << "--\nTemp:" << temp << "\nHumid:" << humid << "\nPress:" << pres << "\nCreatedAt:" << createdAt << "\n";
             if(dataRequestValue == 0){
