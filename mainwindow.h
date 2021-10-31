@@ -16,6 +16,7 @@
 #define HUMID_MAX 100
 #define PRES_MIN 960
 #define PRES_MAX 1060
+#define GRAPH_SIZE 610
 
 #define MIN_TIME 0
 #define MAX_TIME 60
@@ -48,9 +49,9 @@ private slots:
     void on_PresRadioBtn_clicked();
 
 private:
-    float temp;
-    float humid;
-    float pres;
+    int temp;
+    int humid;
+    int pres;
 
     bool connected = false;
 

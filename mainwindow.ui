@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>917</width>
-    <height>662</height>
+    <width>864</width>
+    <height>622</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -47,45 +47,6 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_3"/>
    </widget>
-   <widget class="QRadioButton" name="TempRadioBtn">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>30</y>
-      <width>84</width>
-      <height>19</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Temperature</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="HumidRadioBtn">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>60</y>
-      <width>84</width>
-      <height>19</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Humidity</string>
-    </property>
-   </widget>
-   <widget class="QRadioButton" name="PresRadioBtn">
-    <property name="geometry">
-     <rect>
-      <x>30</x>
-      <y>90</y>
-      <width>84</width>
-      <height>19</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Pressure</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="LogoLabel">
     <property name="geometry">
      <rect>
@@ -115,13 +76,57 @@
      <string>© 2021 Stratosphere Inc. All rights reserved.</string>
     </property>
    </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>50</y>
+      <width>160</width>
+      <height>92</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Select chart:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="TempRadioBtn">
+         <property name="text">
+          <string>Temperature</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="HumidRadioBtn">
+         <property name="text">
+          <string>Humidity</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QRadioButton" name="PresRadioBtn">
+         <property name="text">
+          <string>Pressure</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>917</width>
+     <width>864</width>
      <height>20</height>
     </rect>
    </property>

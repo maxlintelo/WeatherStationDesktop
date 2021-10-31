@@ -4,8 +4,6 @@
 static int sUpdateSpeed = 1;
 static int dataRequestValue = 0;
 
-int graphSize = 610;
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -61,20 +59,21 @@ void MainWindow::createTemperatureGraph(){
     tempAxisX = new QValueAxis();
     //tempAxisX->setFormat("hh:mm:ss");
     tempAxisX->setRange(MIN_TIME, MAX_TIME);
+    tempAxisX->setTitleText("Time (s)");
     tempChart->addAxis(tempAxisX, Qt::AlignBottom);
     tempSeries->attachAxis(tempAxisX);
 
     tempAxisY = new QValueAxis();
     tempAxisY->setRange(TEMP_MIN,TEMP_MAX);
+    tempAxisY->setTitleText("Temperature (C)");
     tempChart->addAxis(tempAxisY, Qt::AlignLeft);
     tempSeries->attachAxis(tempAxisY);
 
-    tempChart->legend()->setVisible(true);
-    tempChart->legend()->setAlignment(Qt::AlignBottom);
+    tempChart->legend()->setVisible(false);
 
     tempChartView = new QChartView(tempChart);
     tempChartView->setRenderHint(QPainter::Antialiasing);
-    tempChartView->resize(graphSize, graphSize);
+    tempChartView->resize(GRAPH_SIZE, GRAPH_SIZE);
     tempChartView->setParent(ui->graphTemperature);
     ui->graphTemperature->setVisible(TRUE);
 }
@@ -90,20 +89,21 @@ void MainWindow::createHumidityGraph(){
     humidAxisX = new QValueAxis();
     //humidAxisX->setFormat("hh:mm:ss");
     humidAxisX->setRange(MIN_TIME, MAX_TIME);
+    humidAxisX->setTitleText("Time (s)");
     humidChart->addAxis(humidAxisX, Qt::AlignBottom);
     humidSeries->attachAxis(humidAxisX);
 
     humidAxisY = new QValueAxis();
     humidAxisY->setRange(HUMID_MIN,HUMID_MAX);
+    humidAxisY->setTitleText("Humidity (%)");
     humidChart->addAxis(humidAxisY, Qt::AlignLeft);
     humidSeries->attachAxis(humidAxisY);
 
-    humidChart->legend()->setVisible(true);
-    humidChart->legend()->setAlignment(Qt::AlignBottom);
+    humidChart->legend()->setVisible(false);
 
     humidChartView = new QChartView(humidChart);
     humidChartView->setRenderHint(QPainter::Antialiasing);
-    humidChartView->resize(620, graphSize);
+    humidChartView->resize(620, GRAPH_SIZE);
     humidChartView->setParent(ui->graphHumidity);
     ui->graphHumidity->setVisible(FALSE);
 }
@@ -119,20 +119,21 @@ void MainWindow::createPressureGraph(){
     presAxisX = new QValueAxis();
     //presAxisX->setFormat("hh:mm:ss");
     presAxisX->setRange(MIN_TIME, MAX_TIME);
+    presAxisX->setTitleText("Time (s)");
     presChart->addAxis(presAxisX, Qt::AlignBottom);
     presSeries->attachAxis(presAxisX);
 
     presAxisY = new QValueAxis();
     presAxisY->setRange(PRES_MIN,PRES_MAX);
+    presAxisY->setTitleText("Pressure (hPa)");
     presChart->addAxis(presAxisY, Qt::AlignLeft);
     presSeries->attachAxis(presAxisY);
 
-    presChart->legend()->setVisible(true);
-    presChart->legend()->setAlignment(Qt::AlignBottom);
+    presChart->legend()->setVisible(false);
 
     presChartView = new QChartView(presChart);
     presChartView->setRenderHint(QPainter::Antialiasing);
-    presChartView->resize(graphSize, graphSize);
+    presChartView->resize(GRAPH_SIZE, GRAPH_SIZE);
     presChartView->setParent(ui->graphPressure);
     ui->graphPressure->setVisible(FALSE);
 }
@@ -149,9 +150,8 @@ void MainWindow::initiateTimer(){
 
 void MainWindow::graphUpdateEvent(){
     connectToAPI();
-
     if (connected == false){
-        qDebug() << "Not connected to the internet.";
+        qDebug() << "Could not connect to server";
     } else {
         tempSeries->append(sUpdateSpeed, temp);
         humidSeries->append(sUpdateSpeed, humid);
@@ -190,9 +190,9 @@ void MainWindow::checkAPIConnection(QNetworkReply *reply){
         document = QJsonDocument::fromJson(reply->readAll());
         rootObj = document.object();
         foreach(const QJsonValue & v, document.array()) {
-            temp = v["temperature"].toString().toFloat();
-            humid = v["humidity"].toString().toFloat();
-            pres = v["pressure"].toString().toFloat();
+            temp = v["temperature"].toString().toInt();
+            humid = v["humidity"].toString().toInt();
+            pres = v["pressure"].toString().toInt();
             createdAt = v["createdAt"].toString();
             qDebug() << "-- Doc" << dataRequestValue << "--\nTemp:" << temp << "\nHumid:" << humid << "\nPress:" << pres << "\nCreatedAt:" << createdAt << "\n";
             if(dataRequestValue == 0){
