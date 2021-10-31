@@ -23,7 +23,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     createPressureGraph();
     connectToAPI();
     initiateTimer();
-    ui->TempRadioBtn->setChecked(true);
 }
 
 
