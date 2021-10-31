@@ -99,7 +99,7 @@
      <string/>
     </property>
     <property name="pixmap">
-     <pixmap>Logo.jpg</pixmap>
+     <pixmap>../../../../OneDrive - Avans Hogeschool/Project Weerstation/3 - Application/Logo.jpg</pixmap>
     </property>
    </widget>
    <widget class="QLabel" name="label">

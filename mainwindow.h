@@ -10,6 +10,16 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
+#define TEMP_MIN -20
+#define TEMP_MAX 40
+#define HUMID_MIN 0
+#define HUMID_MAX 100
+#define PRES_MIN 960
+#define PRES_MAX 1060
+
+#define MIN_TIME 0
+#define MAX_TIME 60
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
     class MainWindow;
@@ -49,8 +59,8 @@ private:
     QTimer *clearDataTimer;
 
     QUrl url;
-    QString myStartupUrl = "http://81.207.176.52:8081/api/mock?limit=2/";
-    QString myUrl = "http://81.207.176.52:8081/api/mock?limit=1/";
+    QString myStartupUrl = "http://81.207.176.52:8081/api/v3?limit=2/";
+    QString myUrl = "http://81.207.176.52:8081/api/v3?limit=1/";
     QJsonObject rootObj;
     QJsonDocument document;
     QString createdAt;
@@ -59,21 +69,21 @@ private:
     //temperature graph
     QLineSeries *tempSeries;
     QChart *tempChart;
-    QDateTimeAxis *tempAxisX;
+    QValueAxis *tempAxisX;
     QValueAxis *tempAxisY;
     QChartView *tempChartView;
 
     //humidity graph
     QLineSeries *humidSeries;
     QChart *humidChart;
-    QDateTimeAxis *humidAxisX;
+    QValueAxis *humidAxisX;
     QValueAxis *humidAxisY;
     QChartView *humidChartView;
 
     //pressure graph
     QLineSeries *presSeries;
     QChart *presChart;
-    QDateTimeAxis *presAxisX;
+    QValueAxis *presAxisX;
     QValueAxis *presAxisY;
     QChartView *presChartView;
 };

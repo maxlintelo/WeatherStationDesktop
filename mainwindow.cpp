@@ -1,15 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-//add base-line 0 and -20 line!
-int tempMin = -20;
-int tempMax = 40;
-int humidMin = 0;
-int humidMax = 100;
-int presMin = 960;
-int presMax = 1060;
-
-static int xValue = 5;
+static int sUpdateSpeed = 1;
 static int dataRequestValue = 0;
 
 int graphSize = 610;
@@ -23,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     createPressureGraph();
     connectToAPI();
     initiateTimer();
+    ui->TempRadioBtn->setChecked(true);
 }
 
 
@@ -65,14 +58,14 @@ void MainWindow::createTemperatureGraph(){
     tempChart->addSeries(tempSeries);
     tempChart->setTitle("Temperature");
 
-    tempAxisX = new QDateTimeAxis();
-    tempAxisX->setFormat("hh:mm:ss");
-    tempAxisX->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTime().addSecs(60));
+    tempAxisX = new QValueAxis();
+    //tempAxisX->setFormat("hh:mm:ss");
+    tempAxisX->setRange(MIN_TIME, MAX_TIME);
     tempChart->addAxis(tempAxisX, Qt::AlignBottom);
     tempSeries->attachAxis(tempAxisX);
 
     tempAxisY = new QValueAxis();
-    tempAxisY->setRange(tempMin,tempMax);
+    tempAxisY->setRange(TEMP_MIN,TEMP_MAX);
     tempChart->addAxis(tempAxisY, Qt::AlignLeft);
     tempSeries->attachAxis(tempAxisY);
 
@@ -94,14 +87,14 @@ void MainWindow::createHumidityGraph(){
     humidChart->addSeries(humidSeries);
     humidChart->setTitle("Humidity");
 
-    humidAxisX = new QDateTimeAxis();
-    humidAxisX->setFormat("hh:mm:ss");
-    humidAxisX->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTime().addSecs(60));
+    humidAxisX = new QValueAxis();
+    //humidAxisX->setFormat("hh:mm:ss");
+    humidAxisX->setRange(MIN_TIME, MAX_TIME);
     humidChart->addAxis(humidAxisX, Qt::AlignBottom);
     humidSeries->attachAxis(humidAxisX);
 
     humidAxisY = new QValueAxis();
-    humidAxisY->setRange(humidMin,humidMax);
+    humidAxisY->setRange(HUMID_MIN,HUMID_MAX);
     humidChart->addAxis(humidAxisY, Qt::AlignLeft);
     humidSeries->attachAxis(humidAxisY);
 
@@ -123,14 +116,14 @@ void MainWindow::createPressureGraph(){
     presChart->addSeries(presSeries);
     presChart->setTitle("Pressure");
 
-    presAxisX = new QDateTimeAxis();
-    presAxisX->setFormat("hh:mm:ss");
-    presAxisX->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTime().addSecs(60));
+    presAxisX = new QValueAxis();
+    //presAxisX->setFormat("hh:mm:ss");
+    presAxisX->setRange(MIN_TIME, MAX_TIME);
     presChart->addAxis(presAxisX, Qt::AlignBottom);
     presSeries->attachAxis(presAxisX);
 
     presAxisY = new QValueAxis();
-    presAxisY->setRange(presMin,presMax);
+    presAxisY->setRange(PRES_MIN,PRES_MAX);
     presChart->addAxis(presAxisY, Qt::AlignLeft);
     presSeries->attachAxis(presAxisY);
 
@@ -147,11 +140,11 @@ void MainWindow::createPressureGraph(){
 void MainWindow::initiateTimer(){
     dataTimer = new QTimer(this);
     connect(dataTimer, SIGNAL(timeout()),this, SLOT(graphUpdateEvent()));
-    dataTimer->start(5000);
+    dataTimer->start(1000);
 
     clearDataTimer = new QTimer(this);
     connect(clearDataTimer, SIGNAL(timeout()), this, SLOT(graphClearEvent()));
-    clearDataTimer->start(64500);
+    clearDataTimer->start(60500);
 }
 
 void MainWindow::graphUpdateEvent(){
@@ -160,10 +153,10 @@ void MainWindow::graphUpdateEvent(){
     if (connected == false){
         qDebug() << "Not connected to the internet.";
     } else {
-        tempSeries->append(xValue, temp);
-        humidSeries->append(xValue, humid);
-        presSeries->append(xValue, pres);
-        xValue = xValue + 5;
+        tempSeries->append(sUpdateSpeed, temp);
+        humidSeries->append(sUpdateSpeed, humid);
+        presSeries->append(sUpdateSpeed, pres);
+        sUpdateSpeed = sUpdateSpeed + 1;
     }
 }
 
@@ -171,7 +164,7 @@ void MainWindow::graphClearEvent(){
     tempSeries->clear();
     humidSeries->clear();
     presSeries->clear();
-    xValue = 0;
+    sUpdateSpeed = 0;
 }
 
 void MainWindow::connectToAPI(){
