@@ -2,93 +2,80 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QtCharts>
-#include <QDateTimeAxis>
-#include <QChartView>
-#include <QLineSeries>
-#include <QTimer>
+
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QNetworkRequest>
 
-#define TEMP_MIN -20
-#define TEMP_MAX 40
-#define HUMID_MIN 0
-#define HUMID_MAX 100
-#define PRES_MIN 960
-#define PRES_MAX 1060
-#define GRAPH_SIZE 610
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonValue>
 
-#define MIN_TIME 0
-#define MAX_TIME 60
+#include <QDate>
+#include <QTime>
+
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QMainWindow>
+#include <QtCharts/QChartView>
+#include <QtCharts/QLineSeries>
+#include <QtCore/QDateTime>
+#include <QtCharts/QDateTimeAxis>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
+#include <QtCore/QDebug>
+#include <QtCharts/QValueAxis>
+
+#include <QTimer>
+
+#include "database.h"
+#include "sensorchart.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui {
-    class MainWindow;
-}
+namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
+
+QT_CHARTS_USE_NAMESPACE
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-public:
-    void createTemperatureGraph();
-    void createHumidityGraph();
-    void createPressureGraph();
-    void initiateTimer();
-    void connectToAPI();
-    void checkAPIConnection(QNetworkReply*);
-public slots:
-    void graphUpdateEvent();
-    void graphClearEvent();
+
 private slots:
-    void on_TempRadioBtn_clicked();
-    void on_HumidRadioBtn_clicked();
-    void on_PresRadioBtn_clicked();
+    void on_radioTemperature_clicked();
+    void on_radioHumidity_clicked();
+    void on_radioPressure_clicked();
+
+    void on_startDateTime_dateTimeChanged(const QDateTime &dateTime);
+    void on_endDateTime_dateTimeChanged(const QDateTime &dateTime);
+
+    void dataTimerCallback();
+    void graphTimerCallback();
+
+    void on_pushButton_clicked();
 
 private:
-    int temp;
-    int humid;
-    int pres;
+    void replyFinished(QNetworkReply*);
 
-    bool connected = false;
-
+private:
     Ui::MainWindow *ui;
-    QTimer *dataTimer;
-    QTimer *clearDataTimer;
+    QChartView* chartView;
 
-    QUrl url;
-    QString myStartupUrl = "http://81.207.176.52:8081/api/v3?limit=2/";
-    QString myUrl = "http://81.207.176.52:8081/api/v3?limit=1/";
-    QJsonObject rootObj;
-    QJsonDocument document;
-    QString createdAt;
+    DataBase* db;
+    void updateSeries(QJsonArray);
 
+    SensorChart* temperatureChart;
+    SensorChart* humidityChart;
+    SensorChart* pressureChart;
 
-    //temperature graph
-    QLineSeries *tempSeries;
-    QChart *tempChart;
-    QValueAxis *tempAxisX;
-    QValueAxis *tempAxisY;
-    QChartView *tempChartView;
+    QTimer* dataTimer;
+    QTimer* graphTimer;
 
-    //humidity graph
-    QLineSeries *humidSeries;
-    QChart *humidChart;
-    QValueAxis *humidAxisX;
-    QValueAxis *humidAxisY;
-    QChartView *humidChartView;
-
-    //pressure graph
-    QLineSeries *presSeries;
-    QChart *presChart;
-    QValueAxis *presAxisX;
-    QValueAxis *presAxisY;
-    QChartView *presChartView;
+    QDateTime* startTime;
+    QDateTime* endTime;
+    QDateTime* previousTime;
 };
 #endif // MAINWINDOW_H
-
-//https://www.youtube.com/watch?v=RjwxKpzYnFE
-//https://www.youtube.com/watch?v=y-FXTT5Xn2A

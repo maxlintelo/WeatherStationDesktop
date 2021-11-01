@@ -1,230 +1,193 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <algorithm>
 
-static int sUpdateSpeed = 1;
-static int dataRequestValue = 0;
+QT_CHARTS_USE_NAMESPACE
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
+#define INPUT_FREQUENCY 59000
+
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->checkBox->setChecked(true);
+    db = new DataBase(this);
+    connect(db, &DataBase::valueReceived, this, &MainWindow::updateSeries);
 
-    createTemperatureGraph();
-    createHumidityGraph();
-    createPressureGraph();
-    connectToAPI();
-    initiateTimer();
-    ui->TempRadioBtn->setChecked(true);
+    temperatureChart = new SensorChart(SensorType::TemperatureChart);
+    humidityChart = new SensorChart(SensorType::HumidityChart);
+    pressureChart = new SensorChart(SensorType::PressureChart);
+
+    previousTime = new QDateTime();
+    previousTime->setDate(QDateTime::currentDateTime().date());
+    previousTime->setTime(QDateTime::currentDateTime().time());
+    endTime = new QDateTime();
+    endTime->setDate(QDateTime::currentDateTime().date());
+    endTime->setTime(QDateTime::currentDateTime().time());
+    startTime = new QDateTime();
+    startTime->setDate(endTime->date());
+    startTime->setTime(endTime->time().addSecs(-900));
+
+    temperatureChart->setValueRange(-20, 50);
+    humidityChart->setValueRange(0, 100);
+    pressureChart->setValueRange(900, 1100);
+
+    chartView = new QChartView();
+    chartView->setChart(temperatureChart->getChart());
+    chartView->setRenderHint(QPainter::Antialiasing);
+    chartView->resize(ui->graphFrame->width(), ui->graphFrame->height());
+    chartView->setParent(ui->graphFrame);
+
+    dataTimer = new QTimer(this);
+    connect(dataTimer, SIGNAL(timeout()), this, SLOT(dataTimerCallback()));
+    dataTimerCallback();
+    dataTimer->start(1500);
+
+    graphTimer = new QTimer(this);
+    connect(graphTimer, SIGNAL(timeout()), this, SLOT(graphTimerCallback()));
+    graphTimerCallback();
+    graphTimer->start(50);
 }
-
 
 MainWindow::~MainWindow()
 {
-    //main
     delete ui;
+    delete db;
+    delete chartView;
+
+    delete temperatureChart;
+    delete humidityChart;
+    delete pressureChart;
+
     delete dataTimer;
-    delete clearDataTimer;
+    delete graphTimer;
 
-    //temperature graph
-    delete tempSeries;
-    delete tempChart;
-    delete tempAxisX;
-    delete tempAxisY;
-    delete tempChartView;
-
-    //humidity graph
-    delete humidSeries;
-    delete humidChart;
-    delete humidAxisX;
-    delete humidAxisY;
-    delete humidChartView;
-
-    //pressure graph
-    delete presSeries;
-    delete presChart;
-    delete presAxisX;
-    delete presAxisY;
-    delete presChartView;
+    delete startTime;
+    delete endTime;
+    delete previousTime;
 }
 
-//https://www.youtube.com/watch?v=eS61kziGo1I
-
-void MainWindow::createTemperatureGraph(){
-    tempSeries = new QLineSeries();
-
-    tempChart = new QChart();
-    tempChart->legend()->show();
-    tempChart->addSeries(tempSeries);
-    tempChart->setTitle("Temperature");
-
-    tempAxisX = new QValueAxis();
-    //tempAxisX->setFormat("hh:mm:ss");
-    tempAxisX->setRange(MIN_TIME, MAX_TIME);
-    tempAxisX->setTitleText("Time (s)");
-    tempChart->addAxis(tempAxisX, Qt::AlignBottom);
-    tempSeries->attachAxis(tempAxisX);
-
-    tempAxisY = new QValueAxis();
-    tempAxisY->setRange(TEMP_MIN,TEMP_MAX);
-    tempAxisY->setTitleText("Temperature (C)");
-    tempChart->addAxis(tempAxisY, Qt::AlignLeft);
-    tempSeries->attachAxis(tempAxisY);
-
-    tempChart->legend()->setVisible(false);
-
-    tempChartView = new QChartView(tempChart);
-    tempChartView->setRenderHint(QPainter::Antialiasing);
-    tempChartView->resize(GRAPH_SIZE, GRAPH_SIZE);
-    tempChartView->setParent(ui->graphTemperature);
-    ui->graphTemperature->setVisible(TRUE);
+void MainWindow::dataTimerCallback() {
+    // This gets called every second by QTimer timer
+    qint64 dt = QDateTime::currentMSecsSinceEpoch() - startTime->toMSecsSinceEpoch();
+    int lim = dt / INPUT_FREQUENCY;
+    db->getValues(lim + 5);
 }
 
-void MainWindow::createHumidityGraph(){
-    humidSeries = new QLineSeries();
-
-    humidChart = new QChart();
-    humidChart->legend()->show();
-    humidChart->addSeries(humidSeries);
-    humidChart->setTitle("Humidity");
-
-    humidAxisX = new QValueAxis();
-    //humidAxisX->setFormat("hh:mm:ss");
-    humidAxisX->setRange(MIN_TIME, MAX_TIME);
-    humidAxisX->setTitleText("Time (s)");
-    humidChart->addAxis(humidAxisX, Qt::AlignBottom);
-    humidSeries->attachAxis(humidAxisX);
-
-    humidAxisY = new QValueAxis();
-    humidAxisY->setRange(HUMID_MIN,HUMID_MAX);
-    humidAxisY->setTitleText("Humidity (%)");
-    humidChart->addAxis(humidAxisY, Qt::AlignLeft);
-    humidSeries->attachAxis(humidAxisY);
-
-    humidChart->legend()->setVisible(false);
-
-    humidChartView = new QChartView(humidChart);
-    humidChartView->setRenderHint(QPainter::Antialiasing);
-    humidChartView->resize(620, GRAPH_SIZE);
-    humidChartView->setParent(ui->graphHumidity);
-    ui->graphHumidity->setVisible(FALSE);
-}
-
-void MainWindow::createPressureGraph(){
-    presSeries = new QLineSeries();
-
-    presChart = new QChart();
-    presChart->legend()->show();
-    presChart->addSeries(presSeries);
-    presChart->setTitle("Pressure");
-
-    presAxisX = new QValueAxis();
-    //presAxisX->setFormat("hh:mm:ss");
-    presAxisX->setRange(MIN_TIME, MAX_TIME);
-    presAxisX->setTitleText("Time (s)");
-    presChart->addAxis(presAxisX, Qt::AlignBottom);
-    presSeries->attachAxis(presAxisX);
-
-    presAxisY = new QValueAxis();
-    presAxisY->setRange(PRES_MIN,PRES_MAX);
-    presAxisY->setTitleText("Pressure (hPa)");
-    presChart->addAxis(presAxisY, Qt::AlignLeft);
-    presSeries->attachAxis(presAxisY);
-
-    presChart->legend()->setVisible(false);
-
-    presChartView = new QChartView(presChart);
-    presChartView->setRenderHint(QPainter::Antialiasing);
-    presChartView->resize(GRAPH_SIZE, GRAPH_SIZE);
-    presChartView->setParent(ui->graphPressure);
-    ui->graphPressure->setVisible(FALSE);
-}
-
-void MainWindow::initiateTimer(){
-    dataTimer = new QTimer(this);
-    connect(dataTimer, SIGNAL(timeout()),this, SLOT(graphUpdateEvent()));
-    dataTimer->start(1000);
-
-    clearDataTimer = new QTimer(this);
-    connect(clearDataTimer, SIGNAL(timeout()), this, SLOT(graphClearEvent()));
-    clearDataTimer->start(60500);
-}
-
-void MainWindow::graphUpdateEvent(){
-    connectToAPI();
-    if (connected == false){
-        qDebug() << "Could not connect to server";
-    } else {
-        tempSeries->append(sUpdateSpeed, temp);
-        humidSeries->append(sUpdateSpeed, humid);
-        presSeries->append(sUpdateSpeed, pres);
-        sUpdateSpeed = sUpdateSpeed + 1;
-    }
-}
-
-void MainWindow::graphClearEvent(){
-    tempSeries->clear();
-    humidSeries->clear();
-    presSeries->clear();
-    sUpdateSpeed = 0;
-}
-
-void MainWindow::connectToAPI(){
-    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
-    connect(manager, &QNetworkAccessManager::finished, this, &MainWindow::checkAPIConnection);
-
-    if (dataRequestValue == 0){
-        url = QUrl(myStartupUrl);
-    }else {
-        url = QUrl(myUrl);
-    }
-    QNetworkRequest request(url);
-    manager->get(request);
-}
-
-void MainWindow::checkAPIConnection(QNetworkReply *reply){
-    int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    qDebug() << "Statuscode from server: " + QVariant(statusCode).toString();
-    if (statusCode == 0){
-        connected = false;
-    } else {
-        connected = true;
-        document = QJsonDocument::fromJson(reply->readAll());
-        rootObj = document.object();
-        foreach(const QJsonValue & v, document.array()) {
-            temp = v["temperature"].toString().toInt();
-            humid = v["humidity"].toString().toInt();
-            pres = v["pressure"].toString().toInt();
-            createdAt = v["createdAt"].toString();
-            qDebug() << "-- Doc" << dataRequestValue << "--\nTemp:" << temp << "\nHumid:" << humid << "\nPress:" << pres << "\nCreatedAt:" << createdAt << "\n";
-            if(dataRequestValue == 0){
-                tempSeries->append(0,temp);
-                humidSeries->append(0, humid);
-                presSeries->append(0, pres);
-            }
-            dataRequestValue++;
+void MainWindow::graphTimerCallback() {
+    static QDateTime last;
+    if (ui->checkBox->isChecked()) {
+        qint64 dt;
+        if (!last.isNull()) {
+            dt = QDateTime::currentMSecsSinceEpoch() - last.toMSecsSinceEpoch();
+        } else {
+            dt = 0;
         }
+        last = QDateTime::currentDateTime();
+
+        // qDebug() << "Dt" << dt << "Current" << QDateTime::currentMSecsSinceEpoch() << "Last" << last.toMSecsSinceEpoch();
+        startTime->setTime(startTime->time().addMSecs(dt));
+        endTime->setTime(endTime->time().addMSecs(dt));
     }
+
+    ui->startDateTime->setDateTime(*startTime);
+    ui->endDateTime->setDateTime(*endTime);
+    temperatureChart->setTimeRange(*startTime, *endTime);
+    humidityChart->setTimeRange(*startTime, *endTime);
+    pressureChart->setTimeRange(*startTime, *endTime);
 }
 
-void MainWindow::on_TempRadioBtn_clicked()
+void MainWindow::on_radioTemperature_clicked()
 {
-    ui->graphTemperature->setVisible(TRUE);
-    ui->graphHumidity->setVisible(FALSE);
-    ui->graphPressure->setVisible(FALSE);
+    temperatureChart->getSeries()->show();
+    humidityChart->getSeries()->hide();
+    pressureChart->getSeries()->hide();
+    chartView->setChart(temperatureChart->getChart());
+}
+void MainWindow::on_radioHumidity_clicked()
+{
+    temperatureChart->getSeries()->hide();
+    humidityChart->getSeries()->show();
+    pressureChart->getSeries()->hide();
+    chartView->setChart(humidityChart->getChart());
+}
+void MainWindow::on_radioPressure_clicked()
+{
+    temperatureChart->getSeries()->hide();
+    humidityChart->getSeries()->hide();
+    pressureChart->getSeries()->show();
+    chartView->setChart(pressureChart->getChart());
+}
+
+void MainWindow::updateSeries(QJsonArray arr) {
+    QList<QPointF> temperaturePoints;
+    QList<QPointF> humidityPoints;
+    QList<QPointF> pressurePoints;
+
+    foreach(const QJsonValue & v, arr) {
+        int temp = v["temperature"].toInt();
+        int humid = v["humidity"].toInt();
+        int pres = v["pressure"].toInt();
+        QDateTime momentInTime = QDateTime::fromString(v["createdAt"].toString(), Qt::ISODate);
+        temperaturePoints.append(QPointF(momentInTime.toMSecsSinceEpoch(), temp));
+        humidityPoints.append(QPointF(momentInTime.toMSecsSinceEpoch(), humid));
+        pressurePoints.append(QPointF(momentInTime.toMSecsSinceEpoch(), pres));
+        // qDebug() << "Time:" << momentInTime.toMSecsSinceEpoch() << "-" << temp << humid << pres;
+    }
+
+    temperatureChart->getSeries()->replace(temperaturePoints);
+    QVector<int> tempVec;
+    for (int i = 0; i < temperaturePoints.size(); i++) {
+        tempVec.append(temperaturePoints[i].y());
+    }
+    humidityChart->getSeries()->replace(humidityPoints);
+    QVector<int> humidVec;
+    for (int i = 0; i < humidityPoints.size(); i++) {
+        humidVec.append(humidityPoints[i].y());
+    }
+    pressureChart->getSeries()->replace(pressurePoints);
+    QVector<int> pressureVec;
+    for (int i = 0; i < pressurePoints.size(); i++) {
+        pressureVec.append(pressurePoints[i].y());
+    }
+
+    int tempMin = *std::min_element(tempVec.constBegin(), tempVec.constEnd());
+    int tempMax = *std::max_element(tempVec.constBegin(), tempVec.constEnd());
+    int humidMin = *std::min_element(humidVec.constBegin(), humidVec.constEnd());
+    int humidMax = *std::max_element(humidVec.constBegin(), humidVec.constEnd());
+    int pressureMin = *std::min_element(pressureVec.constBegin(), pressureVec.constEnd());
+    int pressureMax = *std::max_element(pressureVec.constBegin(), pressureVec.constEnd());
+
+    temperatureChart->setValueRange(tempMin - 2, tempMax + 2);
+    humidityChart->setValueRange(humidMin - 4, humidMax + 4);
+    pressureChart->setValueRange(pressureMin - 10, pressureMax + 10);
+}
+
+void MainWindow::on_startDateTime_dateTimeChanged(const QDateTime &dateTime)
+{
+    startTime->setDate(dateTime.date());
+    startTime->setTime(dateTime.time());
+    temperatureChart->setTimeMin(dateTime);
+    humidityChart->setTimeMin(dateTime);
+    pressureChart->setTimeMin(dateTime);
+}
+
+void MainWindow::on_endDateTime_dateTimeChanged(const QDateTime &dateTime)
+{
+    endTime->setDate(dateTime.date());
+    endTime->setTime(dateTime.time());
+    temperatureChart->setTimeMax(dateTime);
+    humidityChart->setTimeMax(dateTime);
+    pressureChart->setTimeMax(dateTime);
 }
 
 
-void MainWindow::on_HumidRadioBtn_clicked()
+void MainWindow::on_pushButton_clicked()
 {
-    ui->graphTemperature->setVisible(FALSE);
-    ui->graphHumidity->setVisible(TRUE);
-    ui->graphPressure->setVisible(FALSE);
-}
-
-
-void MainWindow::on_PresRadioBtn_clicked()
-{
-    ui->graphPressure->setVisible(TRUE);
-    ui->graphHumidity->setVisible(FALSE);
-    ui->graphTemperature->setVisible(FALSE);
+    ui->checkBox->setChecked(true);
+    qint64 dt = QDateTime::currentMSecsSinceEpoch() - endTime->toMSecsSinceEpoch();
+    *startTime = startTime->addMSecs(dt);
+    *endTime = endTime->addMSecs(dt);
 }
 

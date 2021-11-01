@@ -6,119 +6,159 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>864</width>
-    <height>622</height>
+    <width>1400</width>
+    <height>900</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QFrame" name="graphTemperature">
+   <widget class="QFrame" name="graphFrame">
     <property name="geometry">
      <rect>
       <x>240</x>
       <y>10</y>
-      <width>881</width>
-      <height>591</height>
+      <width>1150</width>
+      <height>850</height>
      </rect>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout"/>
-   </widget>
-   <widget class="QFrame" name="graphHumidity">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>10</y>
-      <width>881</width>
-      <height>591</height>
-     </rect>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_2"/>
-   </widget>
-   <widget class="QFrame" name="graphPressure">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>10</y>
-      <width>881</width>
-      <height>591</height>
-     </rect>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
     </property>
-    <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
    </widget>
-   <widget class="QLabel" name="LogoLabel">
+   <widget class="QGroupBox" name="groupBox">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>350</y>
-      <width>231</width>
-      <height>231</height>
+      <y>10</y>
+      <width>191</width>
+      <height>91</height>
      </rect>
     </property>
-    <property name="text">
-     <string/>
+    <property name="title">
+     <string>Select Chart</string>
     </property>
-    <property name="pixmap">
-     <pixmap>../../../../OneDrive - Avans Hogeschool/Project Weerstation/3 - Application/Logo.jpg</pixmap>
-    </property>
+    <widget class="QWidget" name="verticalLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>171</width>
+       <height>82</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayoutRadioButtons">
+      <item>
+       <widget class="QRadioButton" name="radioTemperature">
+        <property name="text">
+         <string>Temperature</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioHumidity">
+        <property name="text">
+         <string>Humidity</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="radioPressure">
+        <property name="text">
+         <string>Pressure</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QGroupBox" name="groupBox_2">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>580</y>
-      <width>231</width>
-      <height>16</height>
+      <y>110</y>
+      <width>221</width>
+      <height>201</height>
      </rect>
     </property>
-    <property name="text">
-     <string>© 2021 Stratosphere Inc. All rights reserved.</string>
+    <property name="title">
+     <string>Select Time Range</string>
     </property>
-   </widget>
-   <widget class="QWidget" name="verticalLayoutWidget_2">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>50</y>
-      <width>160</width>
-      <height>92</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Select chart:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="TempRadioBtn">
-         <property name="text">
-          <string>Temperature</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="HumidRadioBtn">
-         <property name="text">
-          <string>Humidity</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="PresRadioBtn">
-         <property name="text">
-          <string>Pressure</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
+    <widget class="QWidget" name="verticalLayoutWidget">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>201</width>
+       <height>105</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Start From</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDateTimeEdit" name="startDateTime">
+        <property name="calendarPopup">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>End At</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDateTimeEdit" name="endDateTime"/>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QCheckBox" name="checkBox">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>130</y>
+       <width>181</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Update Live</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>160</y>
+       <width>181</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Real-Time</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -126,8 +166,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>864</width>
-     <height>20</height>
+     <width>1400</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>
