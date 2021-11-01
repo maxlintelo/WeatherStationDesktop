@@ -12,13 +12,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     ui->checkBox->setChecked(true);
+
+    // Setup DB Signals
     db = new DataBase(this);
     connect(db, &DataBase::valueReceived, this, &MainWindow::updateSeries);
 
+    // Generate new charts
     temperatureChart = new SensorChart(SensorType::TemperatureChart);
     humidityChart = new SensorChart(SensorType::HumidityChart);
     pressureChart = new SensorChart(SensorType::PressureChart);
 
+    // Set endtime to currenttime and startime 15 minutes earlier
+    // (Will be overridden)
     previousTime = new QDateTime();
     previousTime->setDate(QDateTime::currentDateTime().date());
     previousTime->setTime(QDateTime::currentDateTime().time());
@@ -29,21 +34,25 @@ MainWindow::MainWindow(QWidget *parent)
     startTime->setDate(endTime->date());
     startTime->setTime(endTime->time().addSecs(-900));
 
+    // Set default value ranger (Will be overridden)
     temperatureChart->setValueRange(-20, 50);
     humidityChart->setValueRange(0, 100);
     pressureChart->setValueRange(900, 1100);
 
+    // Generate chartview for all three charts
     chartView = new QChartView();
     chartView->setChart(temperatureChart->getChart());
     chartView->setRenderHint(QPainter::Antialiasing);
     chartView->resize(ui->graphFrame->width(), ui->graphFrame->height());
     chartView->setParent(ui->graphFrame);
 
+    // Create timer for retrieving data
     dataTimer = new QTimer(this);
     connect(dataTimer, SIGNAL(timeout()), this, SLOT(dataTimerCallback()));
     dataTimerCallback();
     dataTimer->start(1500);
 
+    // Create timer for updating graph X
     graphTimer = new QTimer(this);
     connect(graphTimer, SIGNAL(timeout()), this, SLOT(graphTimerCallback()));
     graphTimerCallback();
@@ -91,6 +100,7 @@ void MainWindow::graphTimerCallback() {
         endTime->setTime(endTime->time().addMSecs(dt));
     }
 
+    // Update UI date-time and graph start and end
     ui->startDateTime->setDateTime(*startTime);
     ui->endDateTime->setDateTime(*endTime);
     temperatureChart->setTimeRange(*startTime, *endTime);
@@ -125,6 +135,7 @@ void MainWindow::updateSeries(QJsonArray arr) {
     QList<QPointF> humidityPoints;
     QList<QPointF> pressurePoints;
 
+    // Loop through all recieved data and put them in a lsit
     foreach(const QJsonValue & v, arr) {
         int temp = v["temperature"].toInt();
         int humid = v["humidity"].toInt();
@@ -136,6 +147,7 @@ void MainWindow::updateSeries(QJsonArray arr) {
         // qDebug() << "Time:" << momentInTime.toMSecsSinceEpoch() << "-" << temp << humid << pres;
     }
 
+    // Convert to three C vectors
     temperatureChart->getSeries()->replace(temperaturePoints);
     QVector<int> tempVec;
     for (int i = 0; i < temperaturePoints.size(); i++) {
@@ -152,13 +164,13 @@ void MainWindow::updateSeries(QJsonArray arr) {
         pressureVec.append(pressurePoints[i].y());
     }
 
+    // Get all maximum and minimum values and put them in the graph
     int tempMin = *std::min_element(tempVec.constBegin(), tempVec.constEnd());
     int tempMax = *std::max_element(tempVec.constBegin(), tempVec.constEnd());
     int humidMin = *std::min_element(humidVec.constBegin(), humidVec.constEnd());
     int humidMax = *std::max_element(humidVec.constBegin(), humidVec.constEnd());
     int pressureMin = *std::min_element(pressureVec.constBegin(), pressureVec.constEnd());
     int pressureMax = *std::max_element(pressureVec.constBegin(), pressureVec.constEnd());
-
     temperatureChart->setValueRange(tempMin - 2, tempMax + 2);
     humidityChart->setValueRange(humidMin - 4, humidMax + 4);
     pressureChart->setValueRange(pressureMin - 10, pressureMax + 10);
@@ -190,4 +202,3 @@ void MainWindow::on_pushButton_clicked()
     *startTime = startTime->addMSecs(dt);
     *endTime = endTime->addMSecs(dt);
 }
-
